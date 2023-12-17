@@ -6,7 +6,11 @@ import 'package:project_pokedex_flutter/helpers/pokemon_database_helper.dart';
 class TelaDetalhesPokemon extends StatefulWidget {
   final int id;
 
-  TelaDetalhesPokemon({required this.id, required Pokemon pokemon});
+  // Corrija o construtor para receber o parâmetro Pokemon como opcional
+  TelaDetalhesPokemon({required this.id, Pokemon? pokemon})
+      : _pokemon = pokemon;
+
+  final Pokemon? _pokemon;
 
   @override
   _TelaDetalhesPokemonState createState() => _TelaDetalhesPokemonState();

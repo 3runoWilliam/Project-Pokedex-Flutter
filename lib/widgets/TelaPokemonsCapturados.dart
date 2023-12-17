@@ -7,20 +7,40 @@ import 'package:project_pokedex_flutter/widgets/TelaSoltarPokemon.dart';
 class TelaPokemonCapturado extends StatefulWidget {
   @override
   _TelaPokemonCapturadoState createState() => _TelaPokemonCapturadoState();
+
+  static _TelaPokemonCapturadoState? of(BuildContext context) {
+    return context.findAncestorStateOfType<_TelaPokemonCapturadoState>();
+  }
 }
 
 class _TelaPokemonCapturadoState extends State<TelaPokemonCapturado> {
   late Future<List<Pokemon>> _capturedPokemonList;
+  late PokemonDatabaseHelper _pokemonDatabaseHelper;
 
   @override
   void initState() {
     super.initState();
+    _pokemonDatabaseHelper = PokemonDatabaseHelper();
     _capturedPokemonList = _fetchCapturedPokemons();
   }
 
   Future<List<Pokemon>> _fetchCapturedPokemons() async {
-    final db = await PokemonDatabaseHelper().pokemonDatabase;
+    final db = await _pokemonDatabaseHelper.pokemonDatabase;
     return (await db.pokemonDao.findAllPokemons()) ?? [];
+  }
+
+  @override
+  void didUpdateWidget(covariant TelaPokemonCapturado oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Atualize a lista de Pokémon capturados ao atualizar o widget
+    _capturedPokemonList = _fetchCapturedPokemons();
+  }
+
+  // Método para adicionar um Pokémon capturado à lista
+  void adicionarPokemonCapturado(Pokemon pokemon) {
+    setState(() {
+      _capturedPokemonList = _fetchCapturedPokemons();
+    });
   }
 
   @override
@@ -49,8 +69,10 @@ class _TelaPokemonCapturadoState extends State<TelaPokemonCapturado> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            TelaDetalhesPokemon(pokemon: pokemon, id: 0,),
+                        builder: (context) => TelaDetalhesPokemon(
+                          id: pokemon.id,
+                          pokemon: pokemon,
+                        ),
                       ),
                     );
                   },

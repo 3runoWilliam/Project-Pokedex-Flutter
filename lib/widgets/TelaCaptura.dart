@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:project_pokedex_flutter/domain/Pokemons.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:project_pokedex_flutter/helpers/pokemon_database_helper.dart';
@@ -13,6 +15,9 @@ class _TelaCapturaState extends State<TelaCaptura> {
   late List<Pokemon> _pokemonsDisponiveis;
   late bool _conectado;
   late PokemonDatabaseHelper _pokemonDatabaseHelper;
+
+  final String _pokeApiBaseUrl = 'https://pokeapi.co/api/v2/pokemon';
+  final String _apiKey = 'SUA_CHAVE_DE_API_AQUI'; // Substitua pela sua chave de API
 
   @override
   void initState() {
@@ -32,23 +37,38 @@ class _TelaCapturaState extends State<TelaCaptura> {
     });
 
     if (_conectado) {
-      _carregarPokemonsDisponiveis();
+      await _carregarPokemonsDisponiveis();
+    }
+  }
+
+  Future<void> _carregarDetalhesPokemon(int id) async {
+    final response = await http.get(Uri.parse('$_pokeApiBaseUrl/$id/'));
+    
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      
+      setState(() {
+        _pokemonsDisponiveis.add(Pokemon(
+          id: id,
+          nome: data['name'],
+          tipos: 'Tipo ${id % 3 + 1}',
+          urlImagem: data['sprites']['front_default'],
+          baseExperiencia: data['base_experience'],
+          habilidades: 'Habilidade ${id % 5 + 1}',
+          altura: data['height'] / 10.0,
+        ));
+      });
+    } else {
+      throw Exception('Falha ao carregar detalhes do Pokémon');
     }
   }
 
   Future<void> _carregarPokemonsDisponiveis() async {
-    // Simule aqui o processo de carregar Pokémons da API
-    // Substitua isso pela lógica real de carregamento da API
-    List<Pokemon> pokemonsApi = [
-      // Pokemon(id: 1, nome: 'Bulbasaur'),
-      // Pokemon(id: 4, nome: 'Charmander'),
-      // Pokemon(id: 7, nome: 'Squirtle'),
-      // Adicione mais Pokémons conforme necessário
-    ];
+    List<int> idsPokemons = List.generate(6, (index) => index + 1);
 
-    setState(() {
-      _pokemonsDisponiveis = pokemonsApi;
-    });
+    for (int id in idsPokemons) {
+      await _carregarDetalhesPokemon(id);
+    }
   }
 
   Future<void> _capturarPokemon(Pokemon pokemon) async {
