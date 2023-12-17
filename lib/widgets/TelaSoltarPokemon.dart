@@ -53,19 +53,24 @@ class TelaSoltarPokemon extends StatelessWidget {
     final pokemonDatabase = await $FloorPokemonDatabase
         .databaseBuilder('pokemon_database.db')
         .build();
-    final deuCerto = await pokemonDatabase.pokemonDao.deletePokemon(pokemon);
-
-    bool sucesso;
 
     try {
-      sucesso = await pokemonDatabase.pokemonDao.deletePokemon(pokemon) > 0;
-    } catch (e) {
-      sucesso = false;
-    }
+      // Tente excluir o Pokémon do banco de dados
+      final deuCerto = await pokemonDatabase.pokemonDao.deletePokemon(pokemon);
 
-    if (sucesso) {
-      Navigator.of(context).pop();
-    } else {
+      if (deuCerto != null && deuCerto > 0) {
+        // Se a exclusão foi bem-sucedida, volte à tela anterior
+        Navigator.of(context).pop();
+      } else {
+        // Se a exclusão falhou, mostre uma mensagem de erro
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao soltar o Pokémon. Tente novamente.'),
+          ),
+        );
+      }
+    } catch (e) {
+      // Em caso de erro, mostre uma mensagem de erro
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao soltar o Pokémon. Tente novamente.'),

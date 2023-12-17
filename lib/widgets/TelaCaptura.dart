@@ -17,7 +17,7 @@ class _TelaCapturaState extends State<TelaCaptura> {
   late PokemonDatabaseHelper _pokemonDatabaseHelper;
 
   final String _pokeApiBaseUrl = 'https://pokeapi.co/api/v2/pokemon';
-  final String _apiKey = 'SUA_CHAVE_DE_API_AQUI'; // Substitua pela sua chave de API
+  final String _apiKey = 'Project PDM';
 
   @override
   void initState() {
@@ -43,10 +43,10 @@ class _TelaCapturaState extends State<TelaCaptura> {
 
   Future<void> _carregarDetalhesPokemon(int id) async {
     final response = await http.get(Uri.parse('$_pokeApiBaseUrl/$id/'));
-    
+
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      
+
       setState(() {
         _pokemonsDisponiveis.add(Pokemon(
           id: id,
@@ -64,9 +64,12 @@ class _TelaCapturaState extends State<TelaCaptura> {
   }
 
   Future<void> _carregarPokemonsDisponiveis() async {
-    List<int> idsPokemons = List.generate(6, (index) => index + 1);
+    List<int> idsPokemons = List.generate(1017, (index) => index + 1);
+    idsPokemons.shuffle();
 
-    for (int id in idsPokemons) {
+    List<int> idsSelecionados = idsPokemons.sublist(0, 6);
+
+    for (int id in idsSelecionados) {
       await _carregarDetalhesPokemon(id);
     }
   }
