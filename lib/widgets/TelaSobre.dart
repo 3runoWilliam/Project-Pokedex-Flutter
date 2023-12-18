@@ -12,7 +12,7 @@ class TelaSobre extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("GitHub: github.com/MarlonOliveira"),
+            
             SizedBox(height: 16),
             Text(
               "Desenvolvedor: Bruno William Silva",
@@ -29,7 +29,7 @@ class TelaSobre extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text("E-mail: marlon@gmail.com"),
-
+            Text("GitHub: github.com/MarlonOliveira"),
           ],
         ),
       ),

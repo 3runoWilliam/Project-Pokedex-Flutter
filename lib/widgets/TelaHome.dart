@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_pokedex_flutter/widgets/TelaCaptura.dart';
 import 'package:project_pokedex_flutter/widgets/TelaPokemonsCapturados.dart';
-import 'package:project_pokedex_flutter/widgets/TelaSobre.dart'; // Importe a tela Sobre
+import 'package:project_pokedex_flutter/widgets/TelaSobre.dart';
 
 class TelaHome extends StatefulWidget {
   const TelaHome({Key? key}) : super(key: key);
@@ -12,20 +12,22 @@ class TelaHome extends StatefulWidget {
 
 class _TelaHomeState extends State<TelaHome> {
   int _selectedIndex = 0;
-  List<Widget> _telas = [
-    TelaHomeConteudo(),
+  final List<Widget> _telas = [
+    const TelaHomeConteudo(),
     TelaCaptura(),
     TelaPokemonCapturado(),
+    TelaSobre(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('POKEAPI EM FLUTTER'),
+        title: const Text('PokeAPI em Flutter'),
       ),
       body: _telas[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.red, // Defina a cor de fundo aqui
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
@@ -40,6 +42,10 @@ class _TelaHomeState extends State<TelaHome> {
           BottomNavigationBarItem(
             icon: Icon(Icons.catching_pokemon),
             label: 'Capturados',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.admin_panel_settings),
+            label: 'Sobre',
           ),
         ],
       ),
@@ -58,24 +64,15 @@ class TelaHomeConteudo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             'Project PokeAPI for PDM',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 20),
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TelaSobre()),
-              );
-            },
-            child: const Text('Sobre os Desenvolvedores'),
-          ),
+          SizedBox(height: 20),
         ],
       ),
     );

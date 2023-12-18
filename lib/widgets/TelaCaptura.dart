@@ -83,6 +83,12 @@ class _TelaCapturaState extends State<TelaCaptura> {
     });
   }
 
+  @override
+  void didUpdateWidget(covariant TelaCaptura oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _verificarConexao();
+  }
+
   Widget _buildPokemonCard(Pokemon pokemon) {
     bool capturado = _pokemonsCapturados.contains(pokemon);
 

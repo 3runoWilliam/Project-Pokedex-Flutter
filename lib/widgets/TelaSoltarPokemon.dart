@@ -11,7 +11,7 @@ class TelaSoltarPokemon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Soltar Pokémon'),
+        title: const Text('Soltar Pokémon'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -20,23 +20,20 @@ class TelaSoltarPokemon extends StatelessWidget {
           children: [
             Text('Nome: ${pokemon.nome}'),
             Text('ID: ${pokemon.id}'),
-            // Adicione outros detalhes do Pokémon conforme necessário
             SizedBox(height: 16),
-            Image.network(pokemon.urlImagem), // Exemplo de exibição de imagem
+            Image.network(pokemon.urlImagem),
             SizedBox(height: 32),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    // Lógica para confirmar a soltura do Pokémon (excluir do banco de dados)
                     _confirmarSoltura(context, pokemon);
                   },
                   child: Text('Confirmar'),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Voltar à tela anterior sem soltar o Pokémon
                     Navigator.of(context).pop();
                   },
                   child: Text('Cancelar'),
@@ -55,14 +52,11 @@ class TelaSoltarPokemon extends StatelessWidget {
         .build();
 
     try {
-      // Tente excluir o Pokémon do banco de dados
       final deuCerto = await pokemonDatabase.pokemonDao.deletePokemon(pokemon);
 
       if (deuCerto != null && deuCerto > 0) {
-        // Se a exclusão foi bem-sucedida, volte à tela anterior
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true); // Retorna true indicando sucesso
       } else {
-        // Se a exclusão falhou, mostre uma mensagem de erro
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Erro ao soltar o Pokémon. Tente novamente.'),
@@ -70,7 +64,6 @@ class TelaSoltarPokemon extends StatelessWidget {
         );
       }
     } catch (e) {
-      // Em caso de erro, mostre uma mensagem de erro
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao soltar o Pokémon. Tente novamente.'),

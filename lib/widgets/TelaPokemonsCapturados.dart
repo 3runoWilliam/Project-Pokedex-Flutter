@@ -29,16 +29,26 @@ class _TelaPokemonCapturadoState extends State<TelaPokemonCapturado> {
     return (await db.pokemonDao.findAllPokemons()) ?? [];
   }
 
-  @override
-  void didUpdateWidget(covariant TelaPokemonCapturado oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Atualize a lista de Pokémon capturados ao atualizar o widget
-    _capturedPokemonList = _fetchCapturedPokemons();
+  // Método para adicionar um Pokémon capturado à lista
+  Future<void> adicionarPokemonCapturado(Pokemon pokemon) async {
+    // Atualize a lista diretamente no banco de dados
+    final db = await _pokemonDatabaseHelper.pokemonDatabase;
+    await db.pokemonDao.insertPokemon(pokemon);
+
+    setState(() {
+      // Recarregue a lista após adicionar um Pokémon
+      _capturedPokemonList = _fetchCapturedPokemons();
+    });
   }
 
-  // Método para adicionar um Pokémon capturado à lista
-  void adicionarPokemonCapturado(Pokemon pokemon) {
+  // Método para remover um Pokémon capturado da lista
+  Future<void> removerPokemonCapturado(Pokemon pokemon) async {
+    // Remova o Pokémon diretamente do banco de dados
+    final db = await _pokemonDatabaseHelper.pokemonDatabase;
+    await db.pokemonDao.deletePokemon(pokemon);
+
     setState(() {
+      // Recarregue a lista após remover um Pokémon
       _capturedPokemonList = _fetchCapturedPokemons();
     });
   }
@@ -76,15 +86,20 @@ class _TelaPokemonCapturadoState extends State<TelaPokemonCapturado> {
                       ),
                     );
                   },
-                  onLongPress: () {
-                    // Navegar para TelaSoltarPokemon
-                    Navigator.push(
+                  onLongPress: () async {
+                    // Navegar para TelaSoltarPokemon e aguardar um resultado
+                    final resultado = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
                             TelaSoltarPokemon(pokemon: pokemon),
                       ),
                     );
+
+                    // Se o resultado for true, remover o Pokémon da lista
+                    if (resultado == true) {
+                      await removerPokemonCapturado(pokemon);
+                    }
                   },
                   child: ListTile(
                     title: Text(pokemon.nome),
